@@ -1,0 +1,90 @@
+--Library Database – DQL & DML Tasks--
+--DQL:--
+--1. Display all book records.--
+Select * from Book;
+
+--2. Display each book’s title, genre, and availability.--
+Select Title,Genre,isAvailable
+from Book;
+
+--3. Display all member names, email, and membership start date.--
+Select Full_Name, Email, Membership_Start_Date
+from Member;
+
+--4. Display each book’s title and price as BookPrice.--
+SELECT Title, Price AS BookPrice
+FROM Book;
+
+--5. List books priced above 250 LE.--
+Select * from Book
+Where price > 250;
+
+--6. List members who joined before 2023.--
+SELECT * FROM Member
+WHERE Membership_Start_Date < '2023-01-01';
+
+--7. Display books published after 2018.--
+SELECT *
+FROM Book
+WHERE Published_Year > 2018;
+
+--8. Display books ordered by price descending.--
+SELECT *
+FROM Book
+ORDER BY Price DESC;
+
+--9. Display the maximum, minimum, and average book price.--
+SELECT 
+    MAX(Price) AS MaxPrice,
+    MIN(Price) AS MinPrice,
+    AVG(Price) AS AvgPrice
+FROM Book;
+
+--10. Display total number of books.--
+SELECT COUNT(*) AS TotalBooks
+FROM Book;
+
+--11. Display members with NULL email.--
+SELECT *
+FROM Member
+WHERE Email IS NULL;
+
+--12. Display books whose title contains 'Data'--
+SELECT *
+FROM Book
+WHERE Title LIKE '%Data%';
+
+--DML--
+--13. Insert yourself as a member (Member ID = 405).--
+SET IDENTITY_INSERT Member ON;
+INSERT INTO Member (Member_ID, Full_Name, Email, Phone_Number, Membership_Start_Date)
+VALUES
+(405, 'Malak', 'malak405@email.com', '90000000', '2025-12-17');
+SET IDENTITY_INSERT Member OFF;
+SELECT *
+FROM Member
+WHERE Member_ID = 405;
+
+
+--16. Update the return date of your loan to today.--
+
+UPDATE Loan
+SET Return_Date = GETDATE(), Status = 'Returned'
+WHERE Member_ID = 405;
+
+--17. Increase book prices by 5% for books priced under 200.--
+UPDATE Book
+SET Price = Price * 1.05
+WHERE Price < 200;
+
+--18. Update member status to 'Active' for recently joined members.--
+ALTER TABLE Member
+ADD Status VARCHAR(20) DEFAULT 'Inactive';
+
+UPDATE Member
+SET Status = 'Active'
+WHERE Membership_Start_Date >= '2025-01-01';
+
+--19. Delete members who never borrowed a book.--
+DELETE FROM Member
+WHERE Member_ID NOT IN (SELECT DISTINCT Member_ID FROM Loan);
